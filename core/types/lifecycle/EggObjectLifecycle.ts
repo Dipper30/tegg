@@ -11,7 +11,10 @@ export interface EggObjectLifecycle {
   /**
    * call after construct
    */
-  postConstruct?(ctx: EggObjectLifeCycleContext, eggObj: EggObject): Promise<void>;
+  postConstruct?(
+    ctx: EggObjectLifeCycleContext,
+    eggObj: EggObject
+  ): Promise<void>;
 
   /**
    * call before inject deps
@@ -37,6 +40,14 @@ export interface EggObjectLifecycle {
    * destroy the object
    */
   destroy?(ctx: EggObjectLifeCycleContext, eggObj: EggObject): Promise<void>;
+
+  /**
+   * call when module config changed
+   */
+  onModuleConfigChange?(
+    ctx: EggObjectLifeCycleContext,
+    eggObj: EggObject
+  ): Promise<void>;
 }
 
 export type LifecycleHookName = keyof EggObjectLifecycle;

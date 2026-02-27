@@ -11,21 +11,37 @@ describe('test/ModuleConfig.test.ts', () => {
     });
 
     it('should work', () => {
-      const config = ModuleConfigUtil.loadModuleConfigSync(path.join(__dirname, './fixtures/modules/foo-yaml'));
+      const config = ModuleConfigUtil.loadModuleConfigSync(
+        path.join(__dirname, './fixtures/modules/foo-yaml')
+      );
       assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1' } });
     });
 
     it('should load env', () => {
-      const config = ModuleConfigUtil.loadModuleConfigSync(path.join(__dirname, './fixtures/modules/dev-module-config'), undefined, 'dev');
-      assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1', port: 11306 } });
+      const config = ModuleConfigUtil.loadModuleConfigSync(
+        path.join(__dirname, './fixtures/modules/dev-module-config'),
+        undefined,
+        'dev'
+      );
+      assert.deepStrictEqual(config, {
+        mysql: { host: '127.0.0.1', port: 11306 },
+      });
     });
 
     it('should load with configNames', async () => {
-      ModuleConfigUtil.setConfigNames([ 'module.default', 'module.dev' ]);
-      const config = await ModuleConfigUtil.loadModuleConfig(path.join(__dirname, './fixtures/modules/dev-module-config'));
-      const configSync = ModuleConfigUtil.loadModuleConfigSync(path.join(__dirname, './fixtures/modules/dev-module-config'));
-      assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1', port: 11306 } });
-      assert.deepStrictEqual(configSync, { mysql: { host: '127.0.0.1', port: 11306 } });
+      ModuleConfigUtil.setConfigNames(['module.default', 'module.dev']);
+      const config = await ModuleConfigUtil.loadModuleConfig(
+        path.join(__dirname, './fixtures/modules/dev-module-config')
+      );
+      const configSync = ModuleConfigUtil.loadModuleConfigSync(
+        path.join(__dirname, './fixtures/modules/dev-module-config')
+      );
+      assert.deepStrictEqual(config, {
+        mysql: { host: '127.0.0.1', port: 11306 },
+      });
+      assert.deepStrictEqual(configSync, {
+        mysql: { host: '127.0.0.1', port: 11306 },
+      });
     });
 
     // it('should throw error without initialization', async () => {
@@ -42,24 +58,48 @@ describe('test/ModuleConfig.test.ts', () => {
   describe('load module reference', () => {
     describe('module.json not exits', () => {
       it('should work', () => {
-        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json');
+        const fixturesPath = path.join(
+          __dirname,
+          './fixtures/apps/app-with-no-module-json'
+        );
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
         assert.deepStrictEqual(ref, [
           { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
           { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB' },
-          { path: path.join(fixturesPath, 'app/module-b/test/fixtures/module-e'), name: 'moduleE' },
-          { path: path.join(fixturesPath, 'node_modules/module-c'), name: 'moduleC' },
+          {
+            path: path.join(
+              fixturesPath,
+              'app/module-b/test/fixtures/module-e'
+            ),
+            name: 'moduleE',
+          },
+          {
+            path: path.join(fixturesPath, 'node_modules/module-c'),
+            name: 'moduleC',
+          },
         ]);
       });
 
       it('duplicated module', () => {
-        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json-duplicated');
-        assert.throws(() => { ModuleConfigUtil.readModuleReference(fixturesPath); }, /duplicate import of module reference/, 'did not throw with expected message');
+        const fixturesPath = path.join(
+          __dirname,
+          './fixtures/apps/app-with-no-module-json-duplicated'
+        );
+        assert.throws(
+          () => {
+            ModuleConfigUtil.readModuleReference(fixturesPath);
+          },
+          /duplicate import of module reference/,
+          'did not throw with expected message'
+        );
       });
 
       describe('has symlink', () => {
         it('should work', () => {
-          const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-symlink');
+          const fixturesPath = path.join(
+            __dirname,
+            './fixtures/apps/app-with-symlink'
+          );
           const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
           assert.deepStrictEqual(ref, [
             { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
@@ -70,7 +110,10 @@ describe('test/ModuleConfig.test.ts', () => {
 
     describe('module.json exits', () => {
       it('should work', () => {
-        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-module-json');
+        const fixturesPath = path.join(
+          __dirname,
+          './fixtures/apps/app-with-module-json'
+        );
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
         assert.deepStrictEqual(ref, [
           { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
@@ -81,24 +124,36 @@ describe('test/ModuleConfig.test.ts', () => {
 
     describe('module.json has pkg', () => {
       it('should work', () => {
-        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-module-pkg-json');
+        const fixturesPath = path.join(
+          __dirname,
+          './fixtures/apps/app-with-module-pkg-json'
+        );
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath, {
           cwd: fixturesPath,
         });
         assert.deepStrictEqual(ref, [
-          { path: path.join(fixturesPath, 'node_modules/module-a'), name: 'moduleA' },
+          {
+            path: path.join(fixturesPath, 'node_modules/module-a'),
+            name: 'moduleA',
+          },
         ]);
       });
     });
 
     describe('filter module', () => {
       it('should work', () => {
-        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-modules');
+        const fixturesPath = path.join(
+          __dirname,
+          './fixtures/apps/app-with-modules'
+        );
         const readModuleOptions = {
           cwd: fixturesPath,
-          extraFilePattern: [ '!**/dist' ],
+          extraFilePattern: ['!**/dist'],
         };
-        const ref = ModuleConfigUtil.readModuleReference(fixturesPath, readModuleOptions);
+        const ref = ModuleConfigUtil.readModuleReference(
+          fixturesPath,
+          readModuleOptions
+        );
         assert.deepStrictEqual(ref, [
           { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
         ]);
@@ -107,7 +162,6 @@ describe('test/ModuleConfig.test.ts', () => {
   });
 
   describe('read package dependencies', () => {
-
     it('should success if package.json not exist', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/foo');
       const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
@@ -117,28 +171,40 @@ describe('test/ModuleConfig.test.ts', () => {
     it('should success whether dependencies entry has exported package.json', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/packages/d');
       const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
-      assert.deepStrictEqual(ret, [{
-        path: path.resolve(__dirname, './fixtures/monorepo/packages/d/node_modules/e'),
-        name: 'e',
-      }]);
+      assert.deepStrictEqual(ret, [
+        {
+          path: path.resolve(
+            __dirname,
+            './fixtures/monorepo/packages/d/node_modules/e'
+          ),
+          name: 'e',
+        },
+      ]);
     });
 
     it('should read dependencies from self node_modules', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/packages/a');
       const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
-      assert.deepStrictEqual(ret, [{
-        path: path.resolve(__dirname, './fixtures/monorepo/packages/a/node_modules/c'),
-        name: 'c',
-      }]);
+      assert.deepStrictEqual(ret, [
+        {
+          path: path.resolve(
+            __dirname,
+            './fixtures/monorepo/packages/a/node_modules/c'
+          ),
+          name: 'c',
+        },
+      ]);
     });
 
     it('should read dependencies from parent node_modules', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/packages/b');
       const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
-      assert.deepStrictEqual(ret, [{
-        path: path.resolve(__dirname, './fixtures/monorepo/packages/a'),
-        name: 'a',
-      }]);
+      assert.deepStrictEqual(ret, [
+        {
+          path: path.resolve(__dirname, './fixtures/monorepo/packages/a'),
+          name: 'a',
+        },
+      ]);
     });
   });
 
@@ -159,8 +225,8 @@ describe('test/ModuleConfig.test.ts', () => {
     const moduleConfigs = new ModuleConfigs(mockInner);
     const result: Array<[string, any]> = [];
 
-    for (const [ name, holder ] of moduleConfigs) {
-      result.push([ name, holder ]);
+    for (const [name, holder] of moduleConfigs) {
+      result.push([name, holder]);
     }
 
     assert.strictEqual(result.length, 2);
@@ -174,8 +240,8 @@ describe('test/ModuleConfig.test.ts', () => {
     const moduleConfigs = new ModuleConfigs({});
     const result: Array<[string, any]> = [];
 
-    for (const [ name, holder ] of moduleConfigs) {
-      result.push([ name, holder ]);
+    for (const [name, holder] of moduleConfigs) {
+      result.push([name, holder]);
     }
 
     assert.strictEqual(result.length, 0);
@@ -194,9 +260,12 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
       const result = ModuleConfigUtil.deduplicateModules(mockModules);
 
       assert.strictEqual(result.length, 2);
-      assert.ok(result.find(m => m.name === 'module1'));
-      assert.ok(result.find(m => m.name === 'module2'));
-      assert.strictEqual(result.find(m => m.name === 'module1-duplicate'), undefined);
+      assert.ok(result.find((m) => m.name === 'module1'));
+      assert.ok(result.find((m) => m.name === 'module2'));
+      assert.strictEqual(
+        result.find((m) => m.name === 'module1-duplicate'),
+        undefined
+      );
     });
 
     it('should remove duplicate modules by name', () => {
@@ -240,7 +309,7 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
       const result = ModuleConfigUtil.deduplicateModules(mockModules);
 
       assert.strictEqual(result.length, 2);
-      const module1 = result.find(m => m.name === 'module1');
+      const module1 = result.find((m) => m.name === 'module1');
       assert.ok(module1);
       assert.strictEqual(module1!.optional, false); // 应该保留非 optional 版本
     });
@@ -254,7 +323,7 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
       const result = ModuleConfigUtil.deduplicateModules(mockModules);
 
       assert.strictEqual(result.length, 2);
-      const module1 = result.find(m => m.name === 'module1');
+      const module1 = result.find((m) => m.name === 'module1');
       assert.ok(module1);
       assert.strictEqual(module1!.optional, true);
     });
@@ -286,9 +355,9 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
 
       assert.strictEqual(result.length, 3);
 
-      const module1 = result.find(m => m.name === 'module1');
-      const module2 = result.find(m => m.name === 'module2');
-      const module3 = result.find(m => m.name === 'module3');
+      const module1 = result.find((m) => m.name === 'module1');
+      const module2 = result.find((m) => m.name === 'module2');
+      const module3 = result.find((m) => m.name === 'module3');
 
       assert.ok(module1);
       assert.strictEqual(module1!.optional, false); // 应该保留非 optional 版本
@@ -322,7 +391,7 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
       // 验证结果
       assert.strictEqual(result.length, 1);
 
-      const module1 = result.find(m => m.path === '/path/to/module1');
+      const module1 = result.find((m) => m.path === '/path/to/module1');
 
       assert.ok(module1);
       assert.strictEqual(module1!.name, 'newName');
@@ -342,7 +411,7 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
       // 验证结果
       assert.strictEqual(result.length, 1);
 
-      const module1 = result.find(m => m.path === '/path/to/module1');
+      const module1 = result.find((m) => m.path === '/path/to/module1');
 
       assert.ok(module1);
       assert.strictEqual(module1!.name, 'module1');
@@ -364,3 +433,143 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
   });
 });
 
+describe('ModuleConfigs.set', () => {
+  it.only('should deep merge config and update existing holder', async () => {
+    const moduleConfigs = new ModuleConfigs({
+      foo: {
+        name: 'foo',
+        reference: { path: '/path/to/foo', name: 'foo' },
+        config: { mysql: { host: '127.0.0.1', port: 3306 } },
+      },
+    });
+
+    await moduleConfigs.set('foo', {
+      mysql: { port: 3307 },
+      redis: { host: 'localhost' },
+    });
+
+    // Deep merged: mysql.host kept, mysql.port updated, redis added
+    assert.deepStrictEqual(moduleConfigs.get('foo'), {
+      mysql: { host: '127.0.0.1', port: 3307 },
+      redis: { host: 'localhost' },
+    });
+  });
+
+  it('should throw when module is not found', async () => {
+    const moduleConfigs = new ModuleConfigs({});
+
+    await assert.rejects(
+      () => moduleConfigs.set('nonexistent', { key: 'value' }),
+      /Module "nonexistent" not found in ModuleConfigs/
+    );
+  });
+
+  it('should notify registered listeners on set', async () => {
+    const moduleConfigs = new ModuleConfigs({
+      bar: {
+        name: 'bar',
+        reference: { path: '/path/to/bar', name: 'bar' },
+        config: { key: 'original' },
+      },
+    });
+
+    const notifications: Array<{ moduleName: string; config: any }> = [];
+    moduleConfigs.onModuleConfigChange((moduleName, config) => {
+      notifications.push({ moduleName, config });
+    });
+
+    await moduleConfigs.set('bar', { key: 'updated' });
+
+    assert.strictEqual(notifications.length, 1);
+    assert.strictEqual(notifications[0].moduleName, 'bar');
+    assert.deepStrictEqual(notifications[0].config, { key: 'updated' });
+  });
+
+  it('should notify multiple listeners in order', async () => {
+    const moduleConfigs = new ModuleConfigs({
+      baz: {
+        name: 'baz',
+        reference: { path: '/path/to/baz', name: 'baz' },
+        config: {},
+      },
+    });
+
+    const order: number[] = [];
+    moduleConfigs.onModuleConfigChange(() => {
+      order.push(1);
+    });
+    moduleConfigs.onModuleConfigChange(() => {
+      order.push(2);
+    });
+    moduleConfigs.onModuleConfigChange(() => {
+      order.push(3);
+    });
+
+    await moduleConfigs.set('baz', { val: 1 });
+
+    assert.deepStrictEqual(order, [1, 2, 3]);
+  });
+
+  it('should support async listeners', async () => {
+    const moduleConfigs = new ModuleConfigs({
+      asyncModule: {
+        name: 'asyncModule',
+        reference: { path: '/path/to/asyncModule', name: 'asyncModule' },
+        config: {},
+      },
+    });
+
+    let asyncCalled = false;
+    moduleConfigs.onModuleConfigChange(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      asyncCalled = true;
+    });
+
+    await moduleConfigs.set('asyncModule', { done: true });
+    assert.strictEqual(asyncCalled, true);
+  });
+
+  it('should dispose listener via returned function', async () => {
+    const moduleConfigs = new ModuleConfigs({
+      qux: {
+        name: 'qux',
+        reference: { path: '/path/to/qux', name: 'qux' },
+        config: {},
+      },
+    });
+
+    let callCount = 0;
+    const dispose = moduleConfigs.onModuleConfigChange(() => {
+      callCount++;
+    });
+
+    await moduleConfigs.set('qux', { v: 1 });
+    assert.strictEqual(callCount, 1);
+
+    // Dispose
+    dispose();
+
+    await moduleConfigs.set('qux', { v: 2 });
+    assert.strictEqual(callCount, 1); // Not called again
+  });
+
+  it('should preserve object reference after set (injected configs see the update)', async () => {
+    const originalConfig = { key: 'original' };
+    const moduleConfigs = new ModuleConfigs({
+      refModule: {
+        name: 'refModule',
+        reference: { path: '/path/to/refModule', name: 'refModule' },
+        config: originalConfig,
+      },
+    });
+
+    // Simulate injected reference
+    const injectedConfig = moduleConfigs.get('refModule');
+
+    await moduleConfigs.set('refModule', { key: 'updated', extra: 'new' });
+
+    // The same object reference should have been mutated
+    assert.strictEqual(injectedConfig, originalConfig);
+    assert.deepStrictEqual(injectedConfig, { key: 'updated', extra: 'new' });
+  });
+});

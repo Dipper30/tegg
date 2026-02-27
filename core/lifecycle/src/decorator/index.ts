@@ -3,7 +3,7 @@ import { LifecycleUtil } from '../LifycycleUtil';
 
 function createLifecycle(hookName: LifecycleHookName) {
   return () => {
-    return function(target: object, methodName: string) {
+    return function (target: object, methodName: string) {
       const clazz = target.constructor as EggProtoImplClass;
       LifecycleUtil.setLifecycleHook(methodName, hookName, clazz);
     };
@@ -12,7 +12,7 @@ function createLifecycle(hookName: LifecycleHookName) {
 
 function createStaticLifecycle(hookName: LifecycleHookName) {
   return () => {
-    return function(target: EggProtoImplClass, methodName: string) {
+    return function (target: EggProtoImplClass, methodName: string) {
       if (typeof target !== 'function') {
         throw new Error(`${hookName} must be a static function`);
       }
@@ -21,7 +21,6 @@ function createStaticLifecycle(hookName: LifecycleHookName) {
   };
 }
 
-
 export const LifecyclePostConstruct = createLifecycle('postConstruct');
 export const LifecyclePreInject = createLifecycle('preInject');
 export const LifecyclePostInject = createLifecycle('postInject');
@@ -29,3 +28,6 @@ export const LifecycleInit = createLifecycle('init');
 export const LifecyclePreDestroy = createLifecycle('preDestroy');
 export const LifecycleDestroy = createLifecycle('destroy');
 export const LifecyclePreLoad = createStaticLifecycle('preLoad');
+export const LifecycleOnModuleConfigChange = createLifecycle(
+  'onModuleConfigChange'
+);

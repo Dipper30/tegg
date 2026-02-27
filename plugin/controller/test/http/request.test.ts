@@ -28,22 +28,23 @@ describe('plugin/controller/test/http/request.test.ts', () => {
   after(() => {
     return app.close();
   });
-  const [ nodeMajor ] = process.versions.node.split('.').map(v => Number(v));
+  const [nodeMajor] = process.versions.node.split('.').map((v) => Number(v));
   if (nodeMajor >= 16) {
-    it.only('Request should work', async () => {
+    it('Request should work', async () => {
       app.mockCsrf();
       const param = {
         name: 'foo',
         desc: 'mock-desc',
       };
       const headerKey = 'test-header';
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .post('/apps/testRequest')
         .send(param)
         .set('test', headerKey)
         .set('cookie', 'test=foo')
         .expect(200)
-        .expect(res => {
+        .expect((res) => {
           assert(res.body.headers.test === headerKey);
           assert(res.body.method === 'POST');
           assert(res.body.requestBody === JSON.stringify(param));
@@ -52,21 +53,20 @@ describe('plugin/controller/test/http/request.test.ts', () => {
     });
 
     it('stream should work', async () => {
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/apps/stream')
         .expect(200)
-        .expect(res => {
+        .expect((res) => {
           assert(res.text.includes('流式内容5'));
         });
     });
 
     it('error stream should work', async () => {
       await assert.rejects(
-        app.httpRequest()
-          .get('/apps/error_stream')
-          .expect(200)
-        , /Error: aborted/);
+        app.httpRequest().get('/apps/error_stream').expect(200),
+        /Error: aborted/
+      );
     });
   }
-
 });

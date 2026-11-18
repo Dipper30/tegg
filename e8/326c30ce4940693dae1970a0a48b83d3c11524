@@ -1,0 +1,16 @@
+core/common-util/src/Graph.ts
+  h_2d4e871931e47e 137-156
+core/common-util/test/ProtoGraph.test.ts
+  h_2d4e871931e47e 62-112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e8326c30ce4940693dae1970a0a48b83d3c11524",
+  "prompts": {},
+  "humans": {
+    "h_2d4e871931e47e": {
+      "author": "Dipper30 <ddddipper30@gmail.com>"
+    }
+  }
+}
